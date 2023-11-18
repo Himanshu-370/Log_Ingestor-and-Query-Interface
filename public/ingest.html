@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Log Ingestion</title>
+    <link rel="stylesheet" href="style.css" />
+    <!-- If you have a CSS file -->
+  </head>
+  <body>
+    <h1>Ingest Log</h1>
+    <form id="logIngestForm" action="/ingest" method="post">
+      <label for="level">Level:</label>
+      <input type="text" id="level" name="level" /><br />
+
+      <label for="message">Message:</label>
+      <input type="text" id="message" name="message" /><br />
+
+      <label for="resourceId">Resource ID:</label>
+      <input type="text" id="resourceId" name="resourceId" /><br />
+
+      <!-- <label for="timestamp">Timestamp:</label>
+      <input type="datetime-local" id="timestamp" name="timestamp" /><br /> -->
+
+      <label for="traceId">Trace ID:</label>
+      <input type="text" id="traceId" name="traceId" /><br />
+
+      <label for="spanId">Span ID:</label>
+      <input type="text" id="spanId" name="spanId" /><br />
+
+      <label for="commit">Commit:</label>
+      <input type="text" id="commit" name="commit" /><br />
+
+      <label for="parentResourceId">Parent Resource ID:</label>
+      <input type="text" id="parentResourceId" name="parentResourceId" /><br />
+
+      <input type="submit" value="Ingest Log" />
+    </form>
+    <a class="ingestLink" href="/query.html">Search a Log</a>
+  </body>
+  <script>
+    document
+      .getElementById("logIngestForm")
+      .addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const formData = new FormData(this);
+
+        fetch("/ingest", {
+          method: "POST",
+          body: formData,
+        })
+          .then((response) => {
+            if (response.ok) {
+              alert("Log ingested successfully!");
+              this.reset();
+            } else {
+              alert("Failed to ingest log.");
+            }
+          })
+          .catch((error) => alert("Error: " + error.message));
+      });
+  </script>
+</html>

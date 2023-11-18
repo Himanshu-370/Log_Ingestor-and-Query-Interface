@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Log Query Interface</title>
+  </head>
+  <body>
+    <h1>Search Logs</h1>
+    <form id="searchForm" action="/search" method="get">
+      Level: <input type="text" name="level" /><br />
+      Message: <input type="text" name="message" /><br />
+      Resource ID: <input type="text" name="resourceId" /><br />
+      Trace ID: <input type="text" name="traceId" /><br />
+      Span ID: <input type="text" name="spanId" /><br />
+      Commit: <input type="text" name="commit" /><br />
+      Parent Resource ID: <input type="text" name="parentResourceId" /><br />
+      <input type="submit" value="Search" />
+    </form>
+    <a class="ingestLink" href="/ingest.html">Ingest New Log</a>
+    <div id="searchResults"></div>
+  </body>
+  <script>
+    document
+      .getElementById("searchForm")
+      .addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        const queryParams = new URLSearchParams(new FormData(this)).toString();
+        window.history.pushState({}, "", "?" + queryParams);
+
+        fetch("/search?" + queryParams)
+          .then((response) => response.text())
+          .then((html) => {
+            document.getElementById("searchResults").innerHTML = html;
+          })
+          .catch((err) => console.error("Error:", err));
+      });
+
+    // Execute search on page load if there are query parameters
+    window.onload = () => {
+      const currentUrlParams = new URLSearchParams(window.location.search);
+      if (currentUrlParams.toString() !== "") {
+        fetch("/search?" + currentUrlParams.toString())
+          .then((response) => response.text())
+          .then((html) => {
+            document.getElementById("searchResults").innerHTML = html;
+          })
+          .catch((err) => console.error("Error:", err));
+      }
+    };
+  </script>
+</html>
